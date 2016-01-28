@@ -12,7 +12,7 @@ import locale
 #===================================================================================================
 # reraiseit
 #===================================================================================================
-def reraiseit(exception, message, separator='\n'):
+def reraise(exception, message, separator='\n'):
     '''
     Raised the same exception given, with an additional message.
 
@@ -129,13 +129,14 @@ def exception_to_unicode(exception):
 # SPECIAL_EXCEPTIONS
 #===================================================================================================
 # [[[cog
-# SPECIAL_EXCEPTIONS = (
+# SPECIAL_EXCEPTIONS = [
 #     KeyError,
 #     OSError,
+#     IOError,
 #     SyntaxError,
 #     UnicodeDecodeError,
 #     UnicodeEncodeError,
-# )
+# ]
 # from ben10.foundation.string import Dedent
 # exception_map = []
 # for exception_class in SPECIAL_EXCEPTIONS:
@@ -177,6 +178,14 @@ class ReraisedOSError(OSError):
     def __str__(self):
         return self.message
 
+class ReraisedOSError(OSError):
+    def __init__(self, *args):
+        OSError.__init__(self, *args)
+        self.message = None
+
+    def __str__(self):
+        return self.message
+
 class ReraisedSyntaxError(SyntaxError):
     def __init__(self, *args):
         SyntaxError.__init__(self, *args)
@@ -204,8 +213,21 @@ class ReraisedUnicodeEncodeError(UnicodeEncodeError):
 _SPECIAL_EXCEPTION_MAP = {
     KeyError : ReraisedKeyError,
     OSError : ReraisedOSError,
+    OSError : ReraisedOSError,
     SyntaxError : ReraisedSyntaxError,
     UnicodeDecodeError : ReraisedUnicodeDecodeError,
     UnicodeEncodeError : ReraisedUnicodeEncodeError,
 }
-# [[[end]]] (checksum: 457262f8ea7b2cb41fc010baa24fac41)
+# [[[end]]] (checksum: 896c3faa794c9a17cbe89209d38816dc)
+
+
+if six.PY3:
+    class ReraisedFileNotFoundError(FileNotFoundError):
+        def __init__(self, *args):
+            FileNotFoundError.__init__(self, *args)
+            self.message = None
+
+        def __str__(self):
+            return self.message
+
+    _SPECIAL_EXCEPTION_MAP[FileNotFoundError] = ReraisedFileNotFoundError

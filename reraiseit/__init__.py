@@ -1,1 +1,1 @@
-from ._reraiseit import reraiseit, exception_to_unicode
+from ._reraiseit import reraise, exception_to_unicode

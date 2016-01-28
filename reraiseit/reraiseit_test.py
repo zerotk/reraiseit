@@ -1,6 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals, print_function
-from reraiseit import reraiseit, exception_to_unicode
+from reraiseit import reraise, exception_to_unicode
 import pytest
 import traceback
 import six
@@ -42,8 +42,12 @@ class MessageAttributeIsBytesException(Exception):
 #===================================================================================================
 class ExceptionTestConfiguration():
 
-    def __init__(self, exception_type, string_statement, expected_inner_exception_message='', expected_traceback_message=None):
+    def __init__(self, exception_type, string_statement, expected_inner_exception_message='', expected_traceback_message=None, raised_exception=None):
         self.exception_type = exception_type
+        if raised_exception is not None:
+            self.raised_exception = raised_exception
+        else:
+            self.raised_exception = exception_type
         self.string_statement = string_statement
         self.expected_inner_exception_message = expected_inner_exception_message
         self.expected_traceback_message = expected_traceback_message
@@ -58,28 +62,28 @@ class ExceptionTestConfiguration():
         def reraise_exception():
             try:
                 raise_exception()
-            except self.exception_type as e:
-                reraiseit(e, "While doing 'bar'")
+            except self.raised_exception as e:
+                reraise(e, "While doing 'bar'")
 
         try:
             try:
                 reraise_exception()
-            except self.exception_type as e1:
-                reraiseit(e1, "While doing x:")
-        except self.exception_type as e2:
-            reraiseit(e2, "While doing y:")
+            except self.raised_exception as e1:
+                reraise(e1, "While doing x:")
+        except self.raised_exception as e2:
+            reraise(e2, "While doing y:")
 
 
-    def GetExpectedExceptionMessage(self):
+    def get_expected_exception_message(self):
         return "\nWhile doing y:\nWhile doing x:\nWhile doing 'bar'\n" + self.expected_inner_exception_message
 
 
-    def GetExpectedTracebackMessage(self, actual_exception):
+    def get_expected_traceback_message(self, actual_exception):
         # Getting the type of the "actual exception" because its type might be different than self.exception_type
         reraised_exception_name = type(actual_exception).__name__
         if six.PY3 and reraised_exception_name.startswith('Reraised'):
             reraised_exception_name = 'reraiseit._reraiseit.' + reraised_exception_name
-        exception_message = self.GetExpectedExceptionMessage()
+        exception_message = self.get_expected_exception_message()
 
         if self.expected_traceback_message is not None:
             exception_message = self.expected_traceback_message
@@ -94,67 +98,122 @@ class ExceptionTestConfiguration():
         return exception_message
 
 
-parametrized_exceptions = pytest.mark.parametrize('exception_configuration', [
-    ExceptionTestConfiguration(ValueError, "raise ValueError('message')", 'message'),
-    ExceptionTestConfiguration(KeyError, "raise KeyError('message')", "u'message'"),
-    ExceptionTestConfiguration(OSError, "raise OSError(2, 'message')", '[Errno 2] message'),
-    ExceptionTestConfiguration(IOError, "raise IOError('message')", 'message'),
-    ExceptionTestConfiguration(
-        SyntaxError,
-        "in valid syntax",
-        expected_inner_exception_message='invalid syntax (<string>, line 1)',
-        expected_traceback_message=(
-            '  File "<string>", line 1\n'
-            '    in valid syntax\n'
-            '     ^\n'
-            'ReraisedSyntaxError: invalid syntax\n'
-        )
-    ),
-    ExceptionTestConfiguration(
-        UnicodeDecodeError,
-        "u'£'.encode('utf-8').decode('ascii')",
-        "'ascii' codec can't decode byte 0xc2 in position 0: ordinal not in range(128)"
-    ),
-    ExceptionTestConfiguration(
-        UnicodeEncodeError,
-        "u'£'.encode('ascii')",
-        "'ascii' codec can't encode character u'\\xa3' in position 0: ordinal not in range(128)"
-    ),
-    ExceptionTestConfiguration(AttributeError, "raise AttributeError('message')", 'message'),
+if six.PY2:
+    parametrized_exceptions = pytest.mark.parametrize(
+        'exception_configuration',
+        [
+            ExceptionTestConfiguration(ValueError, "raise ValueError('message')", 'message'),
+            ExceptionTestConfiguration(KeyError, "raise KeyError('message')", "u'message'"),
+            ExceptionTestConfiguration(OSError, "raise OSError(2, 'message')", '[Errno 2] message'),
+            ExceptionTestConfiguration(IOError, "raise IOError('message')", 'message'),
+            ExceptionTestConfiguration(
+                SyntaxError,
+                "in valid syntax",
+                expected_inner_exception_message='invalid syntax (<string>, line 1)',
+                expected_traceback_message=(
+                    '  File "<string>", line 1\n'
+                    '    in valid syntax\n'
+                    '     ^\n'
+                    'ReraisedSyntaxError: invalid syntax\n'
+                )
+            ),
+            ExceptionTestConfiguration(
+                UnicodeDecodeError,
+                "u'£'.encode('utf-8').decode('ascii')",
+                "'ascii' codec can't decode byte 0xc2 in position 0: ordinal not in range(128)"
+            ),
+            ExceptionTestConfiguration(
+                UnicodeEncodeError,
+                "u'£'.encode('ascii')",
+                "'ascii' codec can't encode character u'\\xa3' in position 0: ordinal not in range(128)"
+            ),
+            ExceptionTestConfiguration(AttributeError, "raise AttributeError('message')", 'message'),
 
-    ExceptionTestConfiguration(OSError, "raise OSError()"),
-    ExceptionTestConfiguration(OSError, "raise OSError(1)", '1'),
-    # ExceptionTestConfiguration(OSError, "raise OSError(2, '£ message')", '[Errno 2] £ message'),
-    # ExceptionTestConfiguration(IOError, "raise IOError('исключение')", "исключение", expected_traceback_message='IOError: <unprintable IOError object>\n'),
-    # pytest.mark.xfail(raises=AssertionError, reason="ExceptionToUnicode() assumes that the 'message' attribute is 'unicode'")(
-    #    ExceptionTestConfiguration(MessageAttributeIsBytesException, 'raise MessageAttributeIsBytesException()', '')
-    # ),
-    # ExceptionTestConfiguration(OSError, "raise OSError(2, '£ message'.encode(locale.getpreferredencoding()))", '[Errno 2] £ message'),
-    # ExceptionTestConfiguration(OSError, "raise OSError(2, b'£ message')", '[Errno 2] £ message'),
-    # ExceptionTestConfiguration(IOError, "raise IOError(b'£ message')", '£ message', expected_traceback_message='IOError: <unprintable IOError object>\n'),
-    # ExceptionTestConfiguration(Exception, "raise Exception(b'£ message')", '£ message'),
-]
-, ids=[
-    'ValueError',
-    'KeyError',
-    'OSError',
-    'IOError',
-    'SyntaxError',
-    'UnicodeDecodeError',
-    'UnicodeEncodeError',
-    'AttributeError',
+            ExceptionTestConfiguration(OSError, "raise OSError()"),
+            ExceptionTestConfiguration(OSError, "raise OSError(1)", '1'),
+            ExceptionTestConfiguration(OSError, "raise OSError(2, '£ message')", '[Errno 2] £ message'),
+            ExceptionTestConfiguration(IOError, "raise IOError('исключение')", "исключение", expected_traceback_message='IOError: <unprintable IOError object>\n'),
+            pytest.mark.xfail(raises=AssertionError, reason="ExceptionToUnicode() assumes that the 'message' attribute is 'unicode'")(
+               ExceptionTestConfiguration(MessageAttributeIsBytesException, 'raise MessageAttributeIsBytesException()', '')
+            ),
+            ExceptionTestConfiguration(OSError, "raise OSError(2, '£ message'.encode(locale.getpreferredencoding()))", '[Errno 2] £ message'),
+            ExceptionTestConfiguration(OSError, "raise OSError(2, b'£ message')", '[Errno 2] £ message'),
+            ExceptionTestConfiguration(IOError, "raise IOError(b'£ message')", '£ message', expected_traceback_message='IOError: <unprintable IOError object>\n'),
+            ExceptionTestConfiguration(Exception, "raise Exception(b'£ message')", '£ message'),
+        ], ids=[
+            'ValueError',
+            'KeyError',
+            'OSError',
+            'IOError',
+            'SyntaxError',
+            'UnicodeDecodeError',
+            'UnicodeEncodeError',
+            'AttributeError',
 
-    'OSError - empty',
-    'OSError - ErrorNo, empty message',
-    # 'OSError - ErrorNo, unicode message',
-    # 'IOError - unicode message',
-    # 'MessageAttributeIsBytesException',
-    #
-    # 'OSError - bytes message in UTF-8',
-    # 'OSError - bytes message in locale.getpreferredencoding()',
-    # 'IOError - bytes message',
-    # 'Exception - bytes message',
-])
+            'OSError - empty',
+            'OSError - ErrorNo, empty message',
+            'OSError - ErrorNo, unicode message',
+            'IOError - unicode message',
+            'MessageAttributeIsBytesException',
+
+            'OSError - bytes message in UTF-8',
+            'OSError - bytes message in locale.getpreferredencoding()',
+            'IOError - bytes message',
+            'Exception - bytes message',
+        ]
+    )
+else:
+    parametrized_exceptions = pytest.mark.parametrize(
+        'exception_configuration',
+        [
+            ExceptionTestConfiguration(ValueError, "raise ValueError('message')", 'message'),
+            ExceptionTestConfiguration(KeyError, "raise KeyError('message')", "'message'"),
+            ExceptionTestConfiguration(
+                OSError,
+                "raise OSError(2, 'message')",
+                '[Errno 2] message',
+            ),
+            ExceptionTestConfiguration(IOError, "raise IOError('message')", 'message'),
+            ExceptionTestConfiguration(
+                SyntaxError,
+                "in valid syntax",
+                expected_inner_exception_message='invalid syntax (<string>, line 1)',
+                expected_traceback_message=(
+                    '  File "<string>", line 1\n'
+                    '    in valid syntax\n'
+                    '     ^\n'
+                    'reraiseit._reraiseit.ReraisedSyntaxError: invalid syntax\n'
+                )
+            ),
+            ExceptionTestConfiguration(
+                UnicodeDecodeError,
+                "'£'.encode('utf-8').decode('ascii')",
+                "'ascii' codec can't decode byte 0xc2 in position 0: ordinal not in range(128)"
+            ),
+            ExceptionTestConfiguration(
+                UnicodeEncodeError,
+                "'£'.encode('ascii')",
+                "'ascii' codec can't encode character '\\xa3' in position 0: ordinal not in range(128)"
+            ),
+            ExceptionTestConfiguration(AttributeError, "raise AttributeError('message')", 'message'),
+
+            # On Python 3 (Windows) raising OSError actually raises a FileNotFoundError.
+            ExceptionTestConfiguration(OSError, "raise OSError()"),
+            ExceptionTestConfiguration(OSError, "raise OSError(1)", '1'),
+        ], ids=[
+            'ValueError',
+            'KeyError',
+            'OSError',
+            'IOError',
+            'SyntaxError',
+            'UnicodeDecodeError',
+            'UnicodeEncodeError',
+            'AttributeError',
+
+            'OSError - empty',
+            'OSError - ErrorNo, empty message',
+        ]
+    )
 
 
 @parametrized_exceptions
@@ -204,12 +263,12 @@ def testReraiseAddsMessagesCorrectly(exception_configuration):
         exception_configuration.RaiseExceptionUsingReraise()
 
     assert isinstance(e.value, exception_configuration.exception_type)
-    assert exception_to_unicode(e.value) == exception_configuration.GetExpectedExceptionMessage()
+    assert exception_to_unicode(e.value) == exception_configuration.get_expected_exception_message()
 
     traceback_message = traceback.format_exception_only(type(e.value), e.value)
     traceback_message = ''.join(traceback_message)
 
-    assert traceback_message == exception_configuration.GetExpectedTracebackMessage(e.value)
+    assert traceback_message == exception_configuration.get_expected_traceback_message(e.value)
 
 
 @parametrized_exceptions
