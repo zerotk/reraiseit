@@ -64,6 +64,8 @@ setup(
 
     install_requires=[
         'six',
+        # DEVELOPMENT
+        'coverage',
     ],
     cmdclass={'test': PyTest},
 )
