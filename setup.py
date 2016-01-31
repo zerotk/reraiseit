@@ -59,6 +59,8 @@ setup(
 
     include_package_data=True,
 
+    packages=['reraiseit'],
+
     install_requires=[
         'six',
         # DEVELOPMENT
