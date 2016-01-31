@@ -25,7 +25,7 @@ class PyTest(TestCommand):
 
 setup(
     name='reraiseit',
-    version='0.1.0',
+    version='1.0.0',
 
     author='Alexandre Andrade',
     author_email='kaniabi@gmail.com',
@@ -40,7 +40,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 5 - Beta',
+        'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
@@ -59,13 +59,12 @@ setup(
 
     include_package_data=True,
 
-    #package_dir = {'' : 'source/python'},
-    #packages=find_packages('source/python'),
-
     install_requires=[
         'six',
         # DEVELOPMENT
         'coverage',
+        'cogapp',
+        'pytest',
     ],
     cmdclass={'test': PyTest},
 )
