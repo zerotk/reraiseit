@@ -5,3 +5,24 @@
 # zerotk.reraiseit
 
 Reraise utility function. Just that!
+
+
+```python
+from zerotk.reraiseit import reraise
+
+try:
+  raise RuntimeError('An error occurred')
+except Exception as e:
+  reraise(e, '')
+```
+
+This will produce the following output:
+
+```
+(... traceback ...)
+RuntimeError:
+While testing reraise.
+An error occurred
+```
+
+As you can see, it added a message to the exception and re-raise it.
