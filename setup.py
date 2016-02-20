@@ -1,31 +1,10 @@
 #!/bin/env python
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
-import sys
-
-
-class PyTest(TestCommand):
-
-    user_options = [('pytest-args=', 'a', 'Arguments to pass to py.test')]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-        errno = pytest.main(['zerotk/reraiseit'] + self.pytest_args)
-        sys.exit(errno)
 
 
 setup(
     name='zerotk.reraiseit',
-    version='2.0.0',
+    version='2.0.2',
 
     author='Alexandre Andrade',
     author_email='kaniabi@gmail.com',
@@ -59,14 +38,18 @@ setup(
 
     include_package_data=True,
 
-    packages=['zerotk.reraiseit'],
+    packages=['zerotk', 'zerotk.reraiseit'],
+    namespace_packages=['zerotk'],
 
     install_requires=[
         'six',
-        # DEVELOPMENT
-        'coverage',
+    ],
+    setup_requires=[
+        'pytest_runner',
+    ],
+    tests_require=[
         'cogapp',
+        'coverage',
         'pytest',
     ],
-    cmdclass={'test': PyTest},
 )
