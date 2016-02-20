@@ -46,7 +46,7 @@ setup(
     ],
     setup_requires=[
         'setuptools_scm',
-        'pytest_runner',
+        'pytest-runner',
     ],
     tests_require=[
         'cogapp',
