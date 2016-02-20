@@ -19,13 +19,13 @@ class PyTest(TestCommand):
 
     def run_tests(self):
         import pytest
-        errno = pytest.main(['reraiseit'] + self.pytest_args)
+        errno = pytest.main(['zerotk.reraiseit'] + self.pytest_args)
         sys.exit(errno)
 
 
 setup(
-    name='reraiseit',
-    version='1.0.1',
+    name='zerotk.reraiseit',
+    version='2.0.0',
 
     author='Alexandre Andrade',
     author_email='kaniabi@gmail.com',
@@ -59,7 +59,7 @@ setup(
 
     include_package_data=True,
 
-    packages=['reraiseit'],
+    packages=['zerotk.reraiseit'],
 
     install_requires=[
         'six',
