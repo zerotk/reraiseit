@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='zerotk.reraiseit',
-    version='2.0.2',
+    use_scm_version=True,
 
     author='Alexandre Andrade',
     author_email='kaniabi@gmail.com',
@@ -45,6 +45,7 @@ setup(
         'six',
     ],
     setup_requires=[
+        'setuptools_scm',
         'pytest_runner',
     ],
     tests_require=[
