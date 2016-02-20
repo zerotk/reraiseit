@@ -1,5 +1,5 @@
 six
-
 # Development
-pytest
+coverage
 cogapp
+pytest
