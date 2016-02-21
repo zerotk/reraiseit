@@ -1,0 +1,15 @@
+name: zerotk.reraiseit
+module: zerotk.reraiseit
+namespace: zerotk
+path: zerotk/reraiseit
+author: Alexandre Andrade
+author_email: kaniabi@gmail.com
+development_status: 5 - Production/Stable
+short_description: Reraise exceptions.
+long_description: A function to re-raise exceptions adding information to the traceback and with unicode support.
+install_requires:
+  - six
+keywords:
+  - exception
+  - raise
+  - reraise

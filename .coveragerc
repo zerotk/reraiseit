@@ -20,5 +20,5 @@ exclude_lines =
     if 0:
     if __name__ == .__main__.:
 
-    # Don't com plain about Python 2 only code:
+    # Don't complain about Python 2 only code:
     if six\.PY2

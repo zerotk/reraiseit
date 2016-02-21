@@ -1,5 +1,6 @@
 six
+
 # Development
 coverage
-cogapp
 pytest
+cogapp

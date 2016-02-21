@@ -11,8 +11,8 @@ setup(
 
     url='https://github.com/zerotk/reraiseit',
 
-    description = 'Reraise exceptions.',
-    long_description = '''A function to re-raise exceptions adding information to the traceback and with unicode support.''',
+    description='Reraise exceptions.',
+    long_description='''A function to re-raise exceptions adding information to the traceback and with unicode support.''',
 
     classifiers=[
         # How mature is this project? Common values are
@@ -39,18 +39,11 @@ setup(
     include_package_data=True,
 
     packages=['zerotk', 'zerotk.reraiseit'],
-    namespace_packages=['zerotk'],
+    namespace_packages=[''],
 
-    install_requires=[
-        'six',
-    ],
-    setup_requires=[
-        'setuptools_scm',
-        'pytest-runner',
-    ],
-    tests_require=[
-        'cogapp',
-        'coverage',
-        'pytest',
-    ],
+    keywords=['exception', 'raise', 'reraise'],
+
+    install_requires=['six'],
+    setup_requires=['setuptools_scm', 'pytest-runner'],
+    tests_require=['coverage', 'pytest'],
 )
