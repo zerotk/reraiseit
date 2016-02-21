@@ -39,7 +39,7 @@ setup(
     include_package_data=True,
 
     packages=['zerotk', 'zerotk.reraiseit'],
-    namespace_packages=[''],
+    namespace_packages=['zerotk'],
 
     keywords=['exception', 'raise', 'reraise'],
 
