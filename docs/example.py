@@ -1,6 +1,6 @@
 from zerotk.reraiseit import reraise
 
 try:
-  raise RuntimeError('ops')
+    raise RuntimeError('ops')
 except Exception as e:
-  reraise(e, 'While testing reraise.')
+    reraise(e, 'While testing reraise.')

@@ -6,7 +6,8 @@ def release():
     """
     Publishes the project on PyPI.
 
-    We have automatic publishing enabled on TRAVIS build, so this is not necessary... but I'll keep here for reference.
+    We have automatic publishing enabled on TRAVIS build, so this is not
+    necessary... but I'll keep here for reference.
     """
     run("python setup.py sdist upload")
 
@@ -25,7 +26,6 @@ def travis_setpass():
     Stores the PyPI password (encrypted) in the .travis.yml file.
     """
     print("travis encrypt --add deploy.password")
-
 
 
 @task
