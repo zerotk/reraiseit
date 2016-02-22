@@ -27,3 +27,10 @@ def travis_setpass():
     print("travis encrypt --add deploy.password")
 
 
+
+@task
+def cog():
+    """
+    Generate code using cog in the appropriate files.
+    """
+    run("cog -r zerotk/reraiseit/_reraiseit.py")
