@@ -1,6 +1,6 @@
-[![PyPI](https://img.shields.io/pypi/v/zerotk.reraiseit.svg?style=flat-square)]()
-[![Travis](https://img.shields.io/travis/zerotk/easyfs.svg?style=flat-square)]()
-[![Coveralls](https://img.shields.io/coveralls/zerotk/reraiseit.svg?style=flat-square)]()
+[![PyPI](https://img.shields.io/pypi/v/zerotk.reraiseit.svg?style=flat-square)](https://pypi.python.org/pypi/zerotk.reraiseit)
+[![Travis](https://img.shields.io/travis/zerotk/reraiseit.svg?style=flat-square)](https://travis-ci.org/zerotk/reraiseit)
+[![Coveralls](https://img.shields.io/coveralls/zerotk/reraiseit.svg?style=flat-square)](https://coveralls.io/github/zerotk/reraiseit)
 
 # zerotk.reraiseit
 
