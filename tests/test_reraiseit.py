@@ -291,17 +291,17 @@ def testReraiseKeepsTraceback(exception_configuration):
 
     crash_entry = e.traceback.getcrashentry()
     expected_filenames = [
-        'reraiseit_test.py',
-        'reraiseit_test.py',
+        'test_reraiseit.py',
+        'test_reraiseit.py',
         '_reraiseit.py',
-        'reraiseit_test.py',
+        'test_reraiseit.py',
         '_reraiseit.py',
-        'reraiseit_test.py',
-        'reraiseit_test.py',
+        'test_reraiseit.py',
+        'test_reraiseit.py',
         '_reraiseit.py',
-        'reraiseit_test.py',
-        'reraiseit_test.py',
-        'reraiseit_test.py',
+        'test_reraiseit.py',
+        'test_reraiseit.py',
+        'test_reraiseit.py',
     ]
     if isinstance(crash_entry.path, MESSAGE_TYPE):
         if six.PY2:
