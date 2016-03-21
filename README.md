@@ -4,8 +4,7 @@
 
 # zerotk.reraiseit
 
-Reraise utility function. Just that!
-
+A function to re-raise exceptions adding information to the traceback and with unicode support.
 
 ```python
 from zerotk.reraiseit import reraise

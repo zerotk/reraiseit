@@ -13,3 +13,7 @@ keywords:
   - exception
   - raise
   - reraise
+tests_require:
+  - pytest
+  - coverage
+  - cogapp
